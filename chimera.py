@@ -1,0 +1,55 @@
+DEBUG = False
+
+
+def is_variant_a_chimera(sequence, others):
+    for i, current in enumerate(others):
+        connecting_index = find_point_of_branching(sequence, current)
+        if connecting_index:
+            others.remove(current)
+            for compared in others:
+                if not find_point_of_branching(sequence, compared, connecting_index):
+                    if DEBUG:
+                        print('Chimera detected')
+                    return True
+            others.insert(i, current)
+    if DEBUG:
+        print('No chimera detected')
+    return False
+
+
+def _test_is_variant_a_chimera(testcases):
+    print([is_variant_a_chimera(case[0], case[1:]) for case in testcases])
+
+
+def find_point_of_branching(sequence, second, begin=0):
+    for i in range(len(sequence) - begin):
+        if sequence[begin + i] == second[begin + i]:
+            continue
+        if DEBUG:
+            print(f'Branching found at {i}')
+        return i
+    if DEBUG:
+        print(f'Branching not found')
+    return False
+
+
+def _test_find_point_of_branching(testcases):
+    print([find_point_of_branching(case[0], case[2], 2) for case in testcases])
+
+
+if __name__ == '__main__':
+    cases = [
+        [
+            'GGCGAGTGCTACTTCACCAACGGGACAGAGCGGGTGCGGGGTGTGACCAGACACATCTATAACCGGGAGGAGTACGTGCGCTTCGACAGCGACGTGGGGGAGCACCGGGCGGTGACGGAGCTGGGGCGTCACTCCGCTGAGTACTTCAACCAGCAGAAGGACTTCATGGAGCGGAAGCGGGCCGAGGTGGACACGGTGTGC',
+            'GGCGAGTGCTACTTCACCAACGGGACAGAGCGGGTGCGGGGTGTGACCAGACACATCTATAACCGGGAGGAGTACGTGCGCTTCGACAGCGACGTGGGGGAGCACCGAGCGGTGACGGAGCTGGGGCGGCCGGACGCTGAGTACTGGAACCAGCAGAAGGACTTCATGGAGCAGACGCGGGCCGCGGTGGACACGGTGTGC',
+            'TGCGAGTGCTACTTCACCAACGGGACGGAGCGGGTGCGGTACCTGAACAGATACATCTATAACCGGGAGGAGTACGTGCACTACGACGACGACGTGGGGGAGCACCGGGCGGTGACGGAGCTGGGGCGTCACTCCGCTGAGTACTTCAACCAGCAGAAGGACTTCATGGAGCGGAAGCGGGCCGAGGTGGACACGGTGTGC',
+            'GGCCAGTGCTACTTCACCAACGGGACGGAGCGGGTGCGGGGTGTGGACAGATACATCTATAACCGGGAGGAGTTCGTGCGCTATGACGACGACGTGGGGGAGCACCGGGCGGTGACGGAGCTGGGGCGGTCCTGGGCCGAGTACTTCAACCGGCAGAAGGACTTCATGGAGCGCAAGCGGGCGGAAGTGGACACGGTGTGC'
+        ],
+        [
+            'GGCGAGTGCTACTTCACCAACGGGACAGAGCGGGTGCGGGGTGTGACCAGACACATCTATAACCGGGAGGAGTACGTGCGCTTCGACAGCGACGTGGGGGAGCACCGAGCGGTGACGGAGCTGGGGCGGCCGGACGCTGAGTACTGGAACCAGCAGAAGGACTTCATGGAGCAGACGCGGGCCGCGGTGGACACGGTGTGC',
+            'TGCGAGTGCTACTTCACCAACGGGACGGAGCGGGTGCGGTACCTGAACAGATACATCTATAACCGGGAGGAGTACGTGCACTACGACGACGACGTGGGGGAGCACCGGGCGGTGACGGAGCTGGGGCGTCACTCCGCTGAGTACTTCAACCAGCAGAAGGACTTCATGGAGCGGAAGCGGGCCGAGGTGGACACGGTGTGC',
+            'GGCCAGTGCTACTTCACCAACGGGACGGAGCGGGTGCGGGGTGTGGACAGATACATCTATAACCGGGAGGAGTTCGTGCGCTATGACGACGACGTGGGGGAGCACCGGGCGGTGACGGAGCTGGGGCGGTCCTGGGCCGAGTACTTCAACCGGCAGAAGGACTTCATGGAGCGCAAGCGGGCGGAAGTGGACACGGTGTGC'
+        ]
+    ]
+    _test_find_point_of_branching(cases)
+    _test_is_variant_a_chimera(cases)
