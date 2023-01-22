@@ -10,6 +10,8 @@ class FileLoader:
         self.readings = list()
         if isinstance(files, list):
             self.files = files
+            if DEBUG:
+                print(self.files)
         else:
             self.files = [files]
         self.format = format_

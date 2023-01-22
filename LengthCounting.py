@@ -1,3 +1,4 @@
+import json
 from collections import Counter
 from FileLoader import FileLoader, scan_dir, get_file_size
 
@@ -23,14 +24,14 @@ class LengthCounting:
         )
         if self.debug:
             print(count)
-        return count
+        return count.most_common()[0][0]
 
     def count_reading_occurrences(self, file_, length_):
         reader = FileLoader(file_)
         readings = reader.exact_length(length_)
         count = Counter([reading.seq for reading in readings])
         self.count = count
-        return self.count
+        return count
 
     def display_count(self, display_first_=20):
         for reading in sorted(list(self.count.keys()), key=lambda x: -self.count[x])[:display_first_]:
@@ -63,6 +64,16 @@ def _test_sequence_lengths_():
     c.count_sequence_lengths()
 
 
+def list_seqs():
+    t = Counter()
+    for d in dirs:
+        c = LengthCounting(d, True)
+        t.update(c.count_reading_occurrences(scan_dir(d), c.count_sequence_lengths()))
+    with open('unique.json', 'w') as file:
+        file.writelines([f'{x}, seq_{i+1}\n' for i, x in enumerate(t)])
+
+
 if __name__ == '__main__':
     # _test_length_counting_()
-    _test_sequence_lengths_()
+    # _test_sequence_lengths_()
+    list_seqs()

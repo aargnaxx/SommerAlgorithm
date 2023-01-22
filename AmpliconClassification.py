@@ -199,11 +199,11 @@ def run_classification(directory, reading_length=201):
         o, r, f, p = get_original_and_replica(file.path, reading_length, True)
         o = AmpliconClassification(o, source=str(f))
         r = AmpliconClassification(r, source=str(p)) if r else None
-        if r:
-            if o.num_readings < r.num_readings:
-                temp = o
-                o = r
-                r = temp
+        # if r:
+        #     if o.num_readings < r.num_readings:
+        #         temp = o
+        #         o = r
+        #         r = temp
         if o.num_readings > 50:
             individuals.append([o, r] if r else [o])
     loop_function_call(individuals, 'step_one')
@@ -240,8 +240,10 @@ def get_original_and_replica(filename, length=201, get_replica_path=False):
 if __name__ == '__main__':
     alleles_final, artifacts_final, unclassified_final = {}, {}, {}
     art1, art2 = {}, {}
-    # results = run_classification('C:/Users/S/diplomski/readings/DRB_A', 194)
-    results = run_classification('C:/Users/S/diplomski/readings/DQB_A', 201)
+    results = run_classification('C:/Users/S/diplomski/readings/DRB_A', 194)
+    # results = run_classification('C:/Users/S/diplomski/readings/DQB_A', 201)
+    more_than_3 = []
+    more_than_2 = []
     for amplicon_pair in results:
         amplicon = amplicon_pair[0]
         alleles = amplicon.get_alleles()
@@ -255,6 +257,10 @@ if __name__ == '__main__':
                     alleles_final.update({allele: alleles_final[allele] + [
                         [amplicon.source[-50:], alleles[allele], amplicon.num_readings]
                     ]})
+        if len(alleles) > 2:
+            more_than_3.append(amplicon.source)
+        if len(alleles) > 1:
+            more_than_2.append(amplicon.source)
         artifacts, artifacts_from_small_diff, artifacts_from_big_diff = amplicon.get_artifacts()
         artifacts_final.update(artifacts)
         amp_unclassified = amplicon.get_unclassified()
@@ -266,7 +272,7 @@ if __name__ == '__main__':
             else:
                 unclassified_final.update({unclassified: unclassified_final[unclassified] + [
                     [amplicon.source[-50:], amp_unclassified[unclassified], amplicon.num_readings]]
-                })
+                                           })
     [print() for i in range(5)]
     print(f'Total alleles found {len(alleles_final)}')
     [print(i) for i in alleles_final.keys()]
@@ -287,3 +293,11 @@ if __name__ == '__main__':
         print(unc)
         for member in unclassified_final[unc]:
             print('    ', member)
+
+    for i in more_than_3:
+        print(i)
+    print()
+    print()
+    print()
+    for i in more_than_2:
+        print(i)
